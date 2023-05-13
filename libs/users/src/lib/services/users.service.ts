@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from '../models/user';
@@ -13,34 +13,38 @@ declare const require;
 })
 export class UsersService {
   apiURLUsers = environment.apiUrl + 'users';
+  headers= new HttpHeaders()
 
   constructor(private http: HttpClient, private usersFacade: UsersFacade) {
     countriesLib.registerLocale(require('i18n-iso-countries/langs/en.json'));
+    this.headers.append('Access-Control-Allow-Headers','*')
+    this.headers.append('Access-Control-Allow-Methods','*');
+    this.headers.append('Access-Control-Allow-Origin','*')
   }
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiURLUsers);
+    return this.http.get<User[]>(this.apiURLUsers,{headers: this.headers});
   }
 
   getUser(userId: string): Observable<User> {
-    return this.http.get<User>(`${this.apiURLUsers}/${userId}`);
+    return this.http.get<User>(`${this.apiURLUsers}/${userId}`,{headers: this.headers});
   }
 
   createUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiURLUsers, user);
+    return this.http.post<User>(this.apiURLUsers, user,{headers: this.headers});
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiURLUsers}/${user.id}`, user);
+    return this.http.put<User>(`${this.apiURLUsers}/${user.id}`, user,{headers: this.headers});
   }
 
   deleteUser(userId: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiURLUsers}/${userId}`);
+    return this.http.delete<any>(`${this.apiURLUsers}/${userId}`,{headers: this.headers});
   }
 
   getUsersCount(): Observable<number> {
     return this.http
-      .get<number>(`${this.apiURLUsers}/get/count`)
+      .get<number>(`${this.apiURLUsers}/get/count`,{headers: this.headers})
       .pipe(map((objectValue: any) => objectValue.userCount));
   }
 

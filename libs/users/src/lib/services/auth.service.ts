@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '@env/environment';
@@ -11,15 +11,20 @@ import { LocalstorageService } from './localstorage.service';
 })
 export class AuthService {
   apiURLUsers = environment.apiUrl + 'users';
+  headers= new HttpHeaders()
 
   constructor(
     private http: HttpClient,
     private token: LocalstorageService,
     private router: Router
-  ) {}
+  ) {
+    this.headers.append('Access-Control-Allow-Headers','*')
+    this.headers.append('Access-Control-Allow-Methods','*');
+    this.headers.append('Access-Control-Allow-Origin','*')
+  }
 
   login(email: string, password: string): Observable<User> {
-    return this.http.post<User>(`${this.apiURLUsers}/login`, { email, password });
+    return this.http.post<User>(`${this.apiURLUsers}/login`, { email, password },{headers: this.headers});
   }
 
   logout() {
